@@ -46,7 +46,7 @@ def init_features ():
 
 def preprocessing (text):
     # handle special characters
-    text = text.decode('ascii', 'ignore')
+    text = text.encode('ascii', 'ignore').decode('ascii')
 
     text = text.strip().replace('\n\n', '#')
     text = text.replace ('\n', '')
@@ -134,43 +134,52 @@ def extract_candidates_name (sections_num, candidates_num, name_list):
 
     return (sections, candidates)
 
-
 #====identify expressions and formalize them into labels "<VML(tag) L(logic, e.g., greater_equal)=X U(unit)=X>value</VML>"
 def formalize_expressions (candidate):
     text = candidate
-    csvfile = open('data\\rules.csv', 'rb')
-    reader = csv.reader(csvfile)
-    now_pattern = "preprocessing"
+    with open('data/numeric_features.csv', newline='') as csvfile:
+        reader = csv.reader(csvfile)
+        now_pattern = "preprocessing"
 
-    for i,pattern in enumerate(reader):
-        source_pattern = pattern[0]
-        target_pattern = pattern[1]
-        pattern_function = pattern[2]
+        print("reader with patterns: ", str(reader))
+        for i, pattern in enumerate(reader):
 
-        if(pattern_function == "process_numerical_values" and pattern_function != now_pattern):
-            matchs = re.findall('<Unit>([^<>]+)</Unit>', text)
-            for match in matchs: text = text.replace(match, match.replace(' / ', '/').replace(' - ','-'))
+            try:
+                source_pattern = pattern[0]
+                target_pattern = pattern[1]
+                pattern_function = pattern[2]
+            except IndexError:
+                print("pattern: ", pattern)
+                print("pattern_function not present")
+                source_pattern = pattern[0]
+                target_pattern = pattern[1]
+                pattern_function = ""
 
-        if(pattern_function == "process_special_logics" and pattern_function != now_pattern):
-            # process 'select' expression, use the first one
-            global selects
-            aselect = selects.split('|')
-            for selec in aselect:
-                selec = selec.replace('X', '<VML Unit([^<>]+)>([^<>]+)</VML>')
-                text = re.sub(selec, r'<VML Unit\1>\2</VML>', text) #
+            if pattern_function == "process_numerical_values" and pattern_function != now_pattern:
+                matchs = re.findall('<Unit>([^<>]+)</Unit>', text)
+                for match in matchs:
+                    text = text.replace(match, match.replace(' / ', '/').replace(' - ', '-'))
 
-            #  process 'between' expressions
-            global between
-            betweens = between.split('|')
-            for betw in betweens:
-                betw = betw.replace('X', '<VML Unit([^<>]+)>([^<>]+)</VML>')
-                text = re.sub(betw, r'<VML Logic=greater_equal Unit\1>\2</VML> - <VML Logic=lower_equal Unit\3>\4</VML>', text) #
-        text = re.sub(source_pattern, target_pattern, text)
-        now_pattern = pattern_function
+            if pattern_function == "process_special_logics" and pattern_function != now_pattern:
+                # process 'select' expression, use the first one
+                global selects
+                aselect = selects.split('|')
+                for selec in aselect:
+                    selec = selec.replace('X', '<VML Unit([^<>]+)>([^<>]+)</VML>')
+                    text = re.sub(selec, r'<VML Unit\1>\2</VML>', text)
+
+                # process 'between' expressions
+                global between
+                betweens = between.split('|')
+                for betw in betweens:
+                    betw = betw.replace('X', '<VML Unit([^<>]+)>([^<>]+)</VML>')
+                    text = re.sub(betw, r'<VML Logic=greater_equal Unit\1>\2</VML> - <VML Logic=lower_equal Unit\3>\4</VML>', text)
+
+            text = re.sub(source_pattern, target_pattern, text)
+            now_pattern = pattern_function
 
     csvfile.close()
     return text
-
 
 add_mentions_front = 'total|absolute|mean|average|abnormal|gross'
 add_mentions_back = 'test results|test result|test scores|test score|tests|test|scores|score|results|result|values|value|levels|level|ratios|ratio|counts|count|volume'
