@@ -21,7 +21,7 @@ def check_and_install_module(package_name):
         install_package(package_name)
 
 # Check and install required modules
-required_modules = ['csv', 'shutil', 'os', 'sys', 'glob', 'pickle']
+required_modules = ['csv', 'shutil', 'os', 'sys', 'glob', 'pickle', 'nltk']
 
 for module_name in required_modules:
     check_and_install_module(module_name)

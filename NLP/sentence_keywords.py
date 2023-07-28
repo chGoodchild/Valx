@@ -3,9 +3,15 @@
 # Created by Tony HAO, th2510@columbia.edu
 
 import os,sys,re,string
-import sentence as NLP_sent
-import word as NLP_word
+import NLP.sentence as NLP_sent
+import NLP.word as NLP_word
 import nltk
+
+try:
+    nltk.data.find('corpora/stopwords')
+except LookupError:
+    print("Downloading NLTK 'stopwords' resource...")
+    nltk.download('stopwords')
 				
 #=========================================syntax
 def keywords_syntax_nltk(sentence):

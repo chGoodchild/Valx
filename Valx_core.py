@@ -286,7 +286,7 @@ def normalization (nor_unit, exps):
             elif exp[3].startswith('g/l'):
                 exp[2], exp[3] = exp[2]*7.745, nor_unit
         elif nor_unit == 'kg/m2':            
-            if exp[3]<>'' and exp[3] <> 'kg/m2':
+            if exp[3] != '' and exp[3] != 'kg/m2':
                 exp[3] = nor_unit
             elif exp[3] == '':
                 exp[3] = nor_unit

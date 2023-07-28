@@ -3,9 +3,10 @@
 # Created by Tony HAO, th2510@columbia.edu
 
 from nltk import sent_tokenize
-import word as NLP_word
+import NLP.word as NLP_word
 import re, string
-import porter2
+#import porter2
+
 
 # splitting text into Sentences using NLTK tokenization
 def sentence_splitting (texts, slen = 1):
