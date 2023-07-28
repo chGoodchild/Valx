@@ -31,7 +31,7 @@ def extract_variables (fdin, ffea, ffea2, var):
         del features["Variable name"]
     elif var in fea_dict_dk:
         features = {var:fea_dict_dk[var]}
-    for key, value in fea_dict_dk.iteritems():
+    for key, value in fea_dict_dk.items():
         names = value[0].lower().split('|')
         for name in names:
             if name.strip() != '': feature_dict_dk[name.strip()] =key
@@ -73,6 +73,7 @@ def extract_variables (fdin, ffea, ffea2, var):
 
     # output result
     fout = os.path.splitext(fdin)[0] + "_exp_%s.csv" % var
+    print("Output result file:", fout)
     ufile.write_csv (fout, output)
     print(ext_print ('saved processed results into: %s' % fout))
     return True
