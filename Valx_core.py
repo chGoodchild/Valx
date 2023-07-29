@@ -141,7 +141,6 @@ def formalize_expressions (candidate):
         reader = csv.reader(csvfile)
         now_pattern = "preprocessing"
 
-        print("reader with patterns: ", str(reader))
         for i, pattern in enumerate(reader):
 
             try:
@@ -149,8 +148,7 @@ def formalize_expressions (candidate):
                 target_pattern = pattern[1]
                 pattern_function = pattern[2]
             except IndexError:
-                print("pattern: ", pattern)
-                print("pattern_function not present")
+                # pattern_function not present
                 source_pattern = pattern[0]
                 target_pattern = pattern[1]
                 pattern_function = ""
@@ -175,6 +173,11 @@ def formalize_expressions (candidate):
                     betw = betw.replace('X', '<VML Unit([^<>]+)>([^<>]+)</VML>')
                     text = re.sub(betw, r'<VML Logic=greater_equal Unit\1>\2</VML> - <VML Logic=lower_equal Unit\3>\4</VML>', text)
 
+
+            # print("\n\n")
+            # print("source pattern: ", source_pattern)
+            # print("target pattern: ", target_pattern)
+            # print("text: ", text)
             text = re.sub(source_pattern, target_pattern, text)
             now_pattern = pattern_function
 
