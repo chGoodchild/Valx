@@ -7,7 +7,7 @@ from W_utility.log import ext_print
 import os,sys,re
 import Valx_core
 import io
-
+import csv
 
 def extract_variables (fdin, ffea, ffea2, var):
     print(f"Processing fdin: ", fdin)
@@ -95,16 +95,12 @@ def extract_variables (fdin, ffea, ffea2, var):
 
     # Convert the output list to CSV-formatted bytes
     csv_output = io.BytesIO()
-    ufile.write_csv(csv_output, output)
+    csv_writer = csv.writer(csv_output)
+    csv_writer.writerows(output)
 
-    # Convert the output list to CSV-formatted string
-    # csv_output = io.StringIO()
-    # ufile.write_csv(csv_output, output)
-
-    # Get the CSV content as a string and write it to the file
-    csv_content = csv_output.getvalue()
+    # Write the bytes content to the file in binary mode 'wb'
     with open(fout, 'wb') as file:
-        file.write(csv_content)
+        file.write(csv_output.getvalue())
 
     print(ext_print('saved processed results into: %s' % fout))
     return True

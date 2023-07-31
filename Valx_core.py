@@ -226,7 +226,7 @@ def identify_variable (exp_text, fea_dict_dk, fea_dict_umls):
 
     if len(can_texts)>0 and not match and first_ngram.strip() != '': #guess variable
         exp_text = exp_text.replace(first_ngram, "<VL Label=%s Source=ngram>%s</VL>" % (first_ngram, first_ngram), 1)
-#     marks =re.findall(r'<VL Label=([^<>]+)>[^<>]+</VL>', exp_text)
+        #     marks =re.findall(r'<VL Label=([^<>]+)>[^<>]+</VL>', exp_text)
 
     return (exp_text, key_ngrams)
 
@@ -249,6 +249,7 @@ def associate_variable_values(exp_text):
     # print("ping, can_str.find('<VL') >-1 and can_str.find('<VML') >-1, ", str(can_str.find('<VL')), " and ", str(can_str.find('<VML')))
     # print("can_str    : ", can_str)
     # print("old_can_str: ", old_can_str)
+
 
     while can_str.find('<VL') >-1 and can_str.find('<VML') >-1:
         con1 = can_str.find('<VL')
