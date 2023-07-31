@@ -6,6 +6,7 @@ import W_utility.file as ufile
 from W_utility.log import ext_print
 import os,sys,re
 import Valx_core
+import io
 
 
 def extract_variables (fdin, ffea, ffea2, var):
@@ -85,12 +86,37 @@ def extract_variables (fdin, ffea, ffea2, var):
                  
             if len(all_exps) > 0: output.append((trials[i][0], sections_num[j], candidates_num[j], exp_text, str(all_exps).replace("u'", "'"))) # output result
 
+
+    # output result
+    fout = os.path.splitext(fdin)[0] + "_exp_%s.csv" % var
+    print("Output result file:", fout)
+
+    print("output: ", output)
+
+    # Convert the output list to CSV-formatted bytes
+    csv_output = io.BytesIO()
+    ufile.write_csv(csv_output, output)
+
+    # Convert the output list to CSV-formatted string
+    # csv_output = io.StringIO()
+    # ufile.write_csv(csv_output, output)
+
+    # Get the CSV content as a string and write it to the file
+    csv_content = csv_output.getvalue()
+    with open(fout, 'wb') as file:
+        file.write(csv_content)
+
+    print(ext_print('saved processed results into: %s' % fout))
+    return True
+
+    """
     # output result
     fout = os.path.splitext(fdin)[0] + "_exp_%s.csv" % var
     print("Output result file:", fout)
     ufile.write_csv (fout, output)
     print(ext_print ('saved processed results into: %s' % fout))
     return True
+    """
 
 
 # processing the command line options

@@ -89,7 +89,7 @@ def phrase_cleaning(txt):
 
 def stem_phrase(phrase):
 	words = phrase.split()
-	for i in xrange(0, len(words)):
+	for i in range(0, len(words)):
 		words [i] = porter2.stem(words[i])
 		
 	return ' '.join(words)

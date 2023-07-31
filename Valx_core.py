@@ -126,7 +126,7 @@ def extract_candidates_name (sections_num, candidates_num, name_list):
     sections = []
     candidates = []
     names = name_list.split('|')
-    for i in xrange(len(candidates_num)):            
+    for i in range(len(candidates_num)):            
         for name in names:
            if name in candidates_num[i]:
                 sections.append(sections_num[i])
@@ -149,13 +149,13 @@ def formalize_expressions (candidate):
             pattern_function = pattern[2]
 
             if pattern_function == "process_numerical_values" and pattern_function != now_pattern:
-                print("ping e")
+                # print("ping e")
                 matchs = re.findall('<Unit>([^<>]+)</Unit>', text)
                 for match in matchs:
                     text = text.replace(match, match.replace(' / ', '/').replace(' - ', '-'))
 
             if pattern_function == "process_special_logics" and pattern_function != now_pattern:
-                print("ping f")
+                # print("ping f")
                 # process 'select' expression, use the first one
                 global selects
                 aselect = selects.split('|')
@@ -169,7 +169,6 @@ def formalize_expressions (candidate):
                 for betw in betweens:
                     betw = betw.replace('X', '<VML Unit([^<>]+)>([^<>]+)</VML>')
                     text = re.sub(betw, r'<VML Logic=greater_equal Unit\1>\2</VML> - <VML Logic=lower_equal Unit\3>\4</VML>', text)
-            print("ping g")
 
             # print("\n\n")
             # print("source pattern: ", source_pattern)
@@ -248,8 +247,8 @@ def associate_variable_values(exp_text):
 
 
     # print("ping, can_str.find('<VL') >-1 and can_str.find('<VML') >-1, ", str(can_str.find('<VL')), " and ", str(can_str.find('<VML')))
-    print("can_str    : ", can_str)
-    print("old_can_str: ", old_can_str)
+    # print("can_str    : ", can_str)
+    # print("old_can_str: ", old_can_str)
 
     while can_str.find('<VL') >-1 and can_str.find('<VML') >-1:
         con1 = can_str.find('<VL')
@@ -297,7 +296,7 @@ def context_validation (var_values, allow_units, error_units):
        
 #====================normalize the unit and their corresponding values
 def normalization (nor_unit, exps):
-#     for i in xrange(len(exps)):
+#     for i in range(len(exps)):
     exp_temp = []
     for exp in exps:
         if ' x ' in exp[2]: 

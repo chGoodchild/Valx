@@ -13,18 +13,18 @@ def worker(trials, start,end, var, features, feature_dict_dk, fea_dict_umls, out
     #load numeric feature list
     Valx_core.init_features()
 
-    for i in xrange(start,end+1):
+    for i in range(start,end+1):
         if i%200 == 0: #define output frequency
             print(('processing %d' % i))
         # pre-processing text,
         text = Valx_core.preprocessing(trials[i][1]) # trials[i][1] is eligibility criteria text
         (sections_num, candidates_num) = Valx_core.extract_candidates_numeric(text) # extract candidates containing numeric features
-        for j in xrange(len(candidates_num)): # for each candidate
+        for j in range(len(candidates_num)): # for each candidate
             exp_text = Valx_core.formalize_expressions(candidates_num[j]) # identify and formalize values
             (exp_text, key_ngrams) = Valx_core.identify_variable(exp_text, feature_dict_dk, fea_dict_umls) # identify variable mentions and map to names
             (variables, vars_values) = Valx_core.associate_variable_values(exp_text)
             all_exps = []
-            for k in xrange(len(variables)):
+            for k in range(len(variables)):
                 curr_var = variables[k]
                 curr_exps = vars_values[k]
                 if curr_var in features:
@@ -77,7 +77,7 @@ def extract_variables (fdin, ffea, ffea2, var, cores):
 
     output = Manager().list()
     jobs = []
-    for i in xrange(1,cores+1):
+    for i in range(1,cores+1):
         t = Process(target=worker, args=(trials, len(trials)*(i-1)/cores,len(trials)*i/cores-1, var, features, feature_dict_dk, fea_dict_umls, output))
         jobs.append(t)
         t.start()    
