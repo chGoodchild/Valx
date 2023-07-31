@@ -7,6 +7,7 @@ import re, math, csv
 import W_utility.file as ufile
 from NLP import sentence
 from NLP import sentence_keywords
+import copy
 
 #--------------------------Define representative logics and their candidate representations 
 
@@ -137,28 +138,24 @@ def extract_candidates_name (sections_num, candidates_num, name_list):
 #====identify expressions and formalize them into labels "<VML(tag) L(logic, e.g., greater_equal)=X U(unit)=X>value</VML>"
 def formalize_expressions (candidate):
     text = candidate
-    with open('data/numeric_features.csv', newline='') as csvfile:
+    with open('data/rules.csv', newline='') as csvfile:
         reader = csv.reader(csvfile)
         now_pattern = "preprocessing"
 
         for i, pattern in enumerate(reader):
 
-            try:
-                source_pattern = pattern[0]
-                target_pattern = pattern[1]
-                pattern_function = pattern[2]
-            except IndexError:
-                # pattern_function not present
-                source_pattern = pattern[0]
-                target_pattern = pattern[1]
-                pattern_function = ""
+            source_pattern = pattern[0]
+            target_pattern = pattern[1]
+            pattern_function = pattern[2]
 
             if pattern_function == "process_numerical_values" and pattern_function != now_pattern:
+                print("ping e")
                 matchs = re.findall('<Unit>([^<>]+)</Unit>', text)
                 for match in matchs:
                     text = text.replace(match, match.replace(' / ', '/').replace(' - ', '-'))
 
             if pattern_function == "process_special_logics" and pattern_function != now_pattern:
+                print("ping f")
                 # process 'select' expression, use the first one
                 global selects
                 aselect = selects.split('|')
@@ -172,7 +169,7 @@ def formalize_expressions (candidate):
                 for betw in betweens:
                     betw = betw.replace('X', '<VML Unit([^<>]+)>([^<>]+)</VML>')
                     text = re.sub(betw, r'<VML Logic=greater_equal Unit\1>\2</VML> - <VML Logic=lower_equal Unit\3>\4</VML>', text)
-
+            print("ping g")
 
             # print("\n\n")
             # print("source pattern: ", source_pattern)
@@ -189,7 +186,9 @@ add_mentions_back = 'test results|test result|test scores|test score|tests|test|
 def identify_variable (exp_text, fea_dict_dk, fea_dict_umls):
     # find candidate string
     if exp_text.find('<VML') == -1:
+        # print("ping b")
         return (exp_text, [])
+    # print("ping a")
     can_texts = re.findall('(\A|VML>)(.+?)(<VML|\Z)',exp_text) 
     
     # generate n-grams
@@ -234,15 +233,24 @@ def identify_variable (exp_text, fea_dict_dk, fea_dict_umls):
 
 
 def associate_variable_values(exp_text):
+
     # reorder exp_text to arrange variable values in order
     can_str = exp_text
-    can_str = re.sub(r'<VL ([^<>]+)>([^<>]+)</VL> <VML ([^<>]+)>([^<>]+)</VML> <VL ([^<>]+)>([^<>]+)</VL>', r'<VL \1>\2</VL> <VML \3>\4</VML>; <VL \5>\6</VL>', can_str) 
-    can_str = re.sub(r'<VML ([^<>]+)>([^<>]+)</VML> (-|to|and) <VML ([^<>]+)>([^<>]+)</VML>( of| for) <VL ([^<>]+)>([^<>]+)</VL>', r'<VL \7>\8</VL> <VML \1>\2</VML> \3 <VML \4>\5</VML>', can_str) 
-    can_str = re.sub(r'<VML ([^<>]+)>([^<>]+)</VML>( of| for) <VL ([^<>]+)>([^<>]+)</VL>', r'<VL \4>\5</VL> <VML \1>\2</VML>', can_str) 
+    old_can_str = copy.deepcopy(can_str)
+
+    can_str = re.sub(r'<VL ([^<>]+)>([^<>]+)</VL> <VML ([^<>]+)>([^<>]+)</VML> <VL ([^<>]+)>([^<>]+)</VL>', r'<VL \1>\2</VL> <VML \3>\4</VML>; <VL \5>\6</VL>', can_str)
+    can_str = re.sub(r'<VML ([^<>]+)>([^<>]+)</VML> (-|to|and) <VML ([^<>]+)>([^<>]+)</VML>( of| for) <VL ([^<>]+)>([^<>]+)</VL>', r'<VL \7>\8</VL> <VML \1>\2</VML> \3 <VML \4>\5</VML>', can_str)
+    can_str = re.sub(r'<VML ([^<>]+)>([^<>]+)</VML>( of| for) <VL ([^<>]+)>([^<>]+)</VL>', r'<VL \4>\5</VL> <VML \1>\2</VML>', can_str)
     
     # find association    
     variables, vars_values = [], []
     start = 0
+
+
+    # print("ping, can_str.find('<VL') >-1 and can_str.find('<VML') >-1, ", str(can_str.find('<VL')), " and ", str(can_str.find('<VML')))
+    print("can_str    : ", can_str)
+    print("old_can_str: ", old_can_str)
+
     while can_str.find('<VL') >-1 and can_str.find('<VML') >-1:
         con1 = can_str.find('<VL')
         start = 0 if start == 0 else con1
