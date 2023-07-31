@@ -86,33 +86,16 @@ def extract_variables (fdin, ffea, ffea2, var):
                  
             if len(all_exps) > 0: output.append((trials[i][0], sections_num[j], candidates_num[j], exp_text, str(all_exps).replace("u'", "'"))) # output result
 
-
     # output result
     fout = os.path.splitext(fdin)[0] + "_exp_%s.csv" % var
     print("Output result file:", fout)
 
-    print("output: ", output)
+    with open(fout, 'w', newline='', encoding='utf-8') as file:
+        csv_writer = csv.writer(file)
+        csv_writer.writerows(output)
 
-    # Convert the output list to CSV-formatted bytes
-    csv_output = io.BytesIO()
-    csv_writer = csv.writer(csv_output)
-    csv_writer.writerows(output)
-
-    # Write the bytes content to the file in binary mode 'wb'
-    with open(fout, 'wb') as file:
-        file.write(csv_output.getvalue())
-
-    print(ext_print('saved processed results into: %s' % fout))
+    print(ext_print('saved processed results into: %s' % fout))                                                                                                                                                   
     return True
-
-    """
-    # output result
-    fout = os.path.splitext(fdin)[0] + "_exp_%s.csv" % var
-    print("Output result file:", fout)
-    ufile.write_csv (fout, output)
-    print(ext_print ('saved processed results into: %s' % fout))
-    return True
-    """
 
 
 # processing the command line options
