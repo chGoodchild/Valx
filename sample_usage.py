@@ -38,17 +38,13 @@ def main():
     # Insert old_columns as the first row of df
     df = pd.concat([pd.DataFrame([old_columns], columns=df.columns), df], ignore_index=True)
 
-    # Extract the first 2 rows of the dataframe
-    df_head = df.head(5)
-    print("first_row:\n", df_head)
-
     # Iterate over rows
     for i in range(min(2, df.shape[0])):
         print("row ", i, ": ", df.iloc[i, 4])
 
     # Create a new dataframe containing only the 0th and 4th columns of df
     df_subset = df.iloc[:, [0, 4]]
-    print("df_subset:\n", df_subset)
+    # print("df_subset:\n", df_subset)
 
     # Save this dataframe as a new CSV file
     df_subset.to_csv('data/diabetes_exp_All_subset.csv', index=False)
